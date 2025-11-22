@@ -1,0 +1,15 @@
+{
+    "name": "discord-bot-builder-worker",
+
+    "main": "index.ts",
+
+    "compatibility_date": "2025-11-22",
+    
+    "vars": {
+        "DEBUG": "true"
+    }
+
+    // "assets": {
+    //   "directory": "dist"
+    // }
+}

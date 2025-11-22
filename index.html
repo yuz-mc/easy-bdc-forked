@@ -130,34 +130,34 @@
     <header class="bg-white dark:bg-gray-800 shadow-sm px-6 py-3 flex justify-between items-center z-20 border-b border-gray-200 dark:border-gray-700">
         <div class="flex items-center gap-3">
             <div class="bg-gradient-to-br from-indigo-500 to-purple-600 p-2 rounded-lg shadow-md">
-                <i data-lucide="bot" class="text-white w-6 h-6"></i>
+                <i data-lucide="bot" class="w-6 h-6 text-white"></i>
             </div>
             <div>
                 <h1 class="text-xl font-bold text-gray-800 dark:text-white leading-tight">Discord Bot Builder</h1>
-                <p class="text-xs text-indigo-600 dark:text-indigo-400 font-medium">Public Edition (Python)</p>
+                <p class="text-xs font-medium text-indigo-600 dark:text-indigo-400">Public Edition (Python)</p>
             </div>
         </div>
 
         <div class="flex items-center gap-3">
-            <span id="saveStatus" class="text-xs font-bold text-green-600 dark:text-green-400 mr-2 opacity-0 transition-opacity duration-500">保存しました</span>
+            <span id="saveStatus" class="mr-2 text-xs font-bold text-green-600 opacity-0 transition-opacity duration-500 dark:text-green-400">保存しました</span>
 
             <!-- ファイル操作ボタン -->
             <input type="file" id="importInput" accept=".xml" class="hidden">
-            <button id="importBtn" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" title="プロジェクトを読込 (XML)">
+            <button id="importBtn" class="p-2 text-gray-600 transition-colors rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600" title="プロジェクトを読込 (XML)">
                 <i data-lucide="upload" class="w-5 h-5"></i>
             </button>
-            <button id="exportBtn" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors" title="プロジェクトを保存 (XML)">
+            <button id="exportBtn" class="p-2 text-gray-600 transition-colors rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600" title="プロジェクトを保存 (XML)">
                 <i data-lucide="download" class="w-5 h-5"></i>
             </button>
 
-            <div class="h-6 w-px bg-gray-300 dark:bg-gray-600 mx-1"></div>
+            <div class="w-px h-6 mx-1 bg-gray-300 dark:bg-gray-600"></div>
 
-            <button id="themeToggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 transition-colors" title="テーマ切り替え">
-                <i data-lucide="moon" class="w-5 h-5 hidden dark:block"></i>
-                <i data-lucide="sun" class="w-5 h-5 block dark:hidden"></i>
+            <button id="themeToggle" class="p-2 transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300 text-gray-600" title="テーマ切り替え">
+                <i data-lucide="moon" class="hidden w-5 h-5 dark:block"></i>
+                <i data-lucide="sun" class="block w-5 h-5 dark:hidden"></i>
             </button>
 
-            <button id="showCodeBtn" class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-medium shadow-lg hover:shadow-indigo-500/30 transition-all transform hover:-translate-y-0.5">
+            <button id="showCodeBtn" class="flex items-center gap-2 px-5 py-2 font-medium text-white transition-all transform rounded-lg shadow-lg bg-indigo-600 hover:bg-indigo-700 hover:shadow-indigo-500/30 hover:-translate-y-0.5">
                 <i data-lucide="code" class="w-4 h-4"></i>
                 <span class="hidden sm:inline">コード生成</span>
             </button>
@@ -165,7 +165,7 @@
     </header>
 
     <!-- メインエリア -->
-    <main class="flex-grow relative w-full h-full">
+    <main class="relative w-full h-full flex-grow">
         <div id="blocklyDiv"></div>
         
         <!-- ツールボックス定義 (多機能化 & わかりやすい日本語) -->
@@ -174,6 +174,7 @@
                 <block type="on_ready"></block>
                 <block type="on_message_create"></block>
                 <block type="on_command_executed"></block>
+                <block type="prefix_command"></block> <!-- 追加 -->
                 <block type="get_message_content"></block>
                 <block type="get_command_arg"></block>
             </category>
@@ -252,46 +253,46 @@
     </main>
 
     <!-- コード出力モーダル -->
-    <div id="codeModal" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden modal-content border border-gray-200 dark:border-gray-700">
+    <div id="codeModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 backdrop-blur-sm bg-gray-900/50">
+        <div class="flex flex-col w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-xl shadow-2xl bg-white dark:bg-gray-800 modal-content border border-gray-200 dark:border-gray-700">
             <!-- モーダルヘッダー -->
-            <div class="p-5 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-800">
+            <div class="flex items-center justify-between p-5 border-b bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
                 <div class="flex items-center gap-2">
-                    <div class="bg-blue-100 dark:bg-blue-900 p-1.5 rounded text-blue-600 dark:text-blue-300">
+                    <div class="p-1.5 rounded bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300">
                         <i data-lucide="file-code" class="w-5 h-5"></i>
                     </div>
                     <h2 class="text-lg font-bold text-gray-800 dark:text-white">Botコード (Python)</h2>
                 </div>
-                <button id="closeModalBtn" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700">
+                <button id="closeModalBtn" class="p-1 transition-colors rounded text-gray-400 hover:text-gray-600 hover:bg-gray-200 dark:hover:text-gray-200 dark:hover:bg-gray-700">
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
             </div>
             
             <!-- モーダルボディ -->
-            <div class="p-6 overflow-y-auto flex-grow bg-white dark:bg-gray-900">
-                <div class="mb-6 space-y-3 bg-indigo-50 dark:bg-indigo-900/30 p-4 rounded-lg border border-indigo-100 dark:border-indigo-800">
-                    <h3 class="font-bold text-indigo-800 dark:text-indigo-300 flex items-center gap-2">
+            <div class="flex-grow p-6 overflow-y-auto bg-white dark:bg-gray-900">
+                <div class="mb-6 space-y-3 p-4 rounded-lg border bg-indigo-50 dark:bg-indigo-900/30 border-indigo-100 dark:border-indigo-800">
+                    <h3 class="flex items-center gap-2 font-bold text-indigo-800 dark:text-indigo-300">
                         <i data-lucide="info" class="w-4 h-4"></i> 実行方法
                     </h3>
-                    <ol class="list-decimal list-inside text-sm text-indigo-700 dark:text-indigo-300 space-y-1">
-                        <li>以下のコードを <code class="bg-white dark:bg-gray-800 px-1 py-0.5 rounded border border-indigo-200 dark:border-indigo-700">bot.py</code> という名前で保存します。</li>
-                        <li>ターミナルで <code class="bg-white dark:bg-gray-800 px-1 py-0.5 rounded border border-indigo-200 dark:border-indigo-700 select-all">pip install discord.py</code> を実行します。</li>
-                        <li><code class="bg-white dark:bg-gray-800 px-1 py-0.5 rounded border border-indigo-200 dark:border-indigo-700">python bot.py</code> を実行してBotを起動します。</li>
+                    <ol class="space-y-1 text-sm list-decimal list-inside text-indigo-700 dark:text-indigo-300">
+                        <li>以下のコードを <code class="px-1 py-0.5 rounded border dark:bg-gray-800 bg-white border-indigo-200 dark:border-indigo-700">bot.py</code> という名前で保存します。</li>
+                        <li>ターミナルで <code class="px-1 py-0.5 rounded border select-all dark:bg-gray-800 bg-white border-indigo-200 dark:border-indigo-700">pip install discord.py</code> を実行します。</li>
+                        <li><code class="px-1 py-0.5 rounded border select-all dark:bg-gray-800 bg-white border-indigo-200 dark:border-indigo-700">python bot.py</code> を実行してBotを起動します。</li>
                     </ol>
                 </div>
 
                 <div class="relative group">
-                    <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                        <button id="copyCodeBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-1.5 rounded shadow-lg flex items-center gap-1 border border-indigo-500">
+                    <div class="absolute top-3 right-3 z-10 opacity-0 transition-opacity group-hover:opacity-100">
+                        <button id="copyCodeBtn" class="flex items-center gap-1 px-3 py-1.5 text-xs text-white rounded shadow-lg bg-indigo-600 hover:bg-indigo-700 border border-indigo-500">
                             <i data-lucide="copy" class="w-3 h-3"></i> コピー
                         </button>
                     </div>
-                    <pre id="codeOutput" class="bg-[#1e1e1e] text-[#d4d4d4] p-4 rounded-lg text-sm shadow-inner border border-gray-700 tab-4"></pre>
+                    <pre id="codeOutput" class="p-4 text-sm rounded-lg shadow-inner tab-4 bg-[#1e1e1e] text-[#d4d4d4] border border-gray-700"></pre>
                 </div>
             </div>
             
             <!-- モーダルフッター -->
-            <div class="p-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-xs text-center text-gray-500 flex justify-center items-center gap-1">
+            <div class="flex items-center justify-center gap-1 p-3 text-xs text-center text-gray-500 border-t bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
                 <i data-lucide="shield-check" class="w-3 h-3"></i> TokenはDiscord Developer Portalから取得し、他人には教えないでください。
             </div>
         </div>
@@ -409,6 +410,20 @@
                 this.setTooltip("指定したコマンド（例: /hello）が実行された時の動作を作ります。");
             }
         };
+        
+        // --- プレフィックスコマンド (追加) ---
+        Blockly.Blocks['prefix_command'] = {
+            init: function() {
+                this.appendDummyInput()
+                    .appendField("🗣️ プレフィックスコマンド")
+                    .appendField(new Blockly.FieldTextInput("!ping"), "COMMAND_NAME")
+                    .appendField("を実行したとき");
+                this.appendStatementInput("DO").setCheck(null).appendField("実行する処理");
+                this.setColour(230); // スラッシュコマンドと同じ色
+                this.setTooltip("指定したプレフィックスコマンド（例: !ping）が実行された時の動作を作ります。");
+            }
+        };
+        // ------------------------------------
 
         Blockly.Blocks['get_command_arg'] = {
             init: function() {
@@ -744,7 +759,7 @@
         Blockly.Python['on_message_create'] = function(block) {
             const branch = Blockly.Python.statementToCode(block, 'DO') || '    pass';
             // メッセージコンテキストとして 'message' 変数を提供
-            return `@bot.event\nasync def on_message(message):\n    if message.author == bot.user:\n        return\n    # コンテキスト変数のエイリアス\n    ctx = message\n    user = message.author\n${branch}\n    await bot.process_commands(message)\n`;
+            return `@bot.event\nasync def on_message(message):\n    if message.author == bot.user:\n        return\n    # コンテキスト変数のエイリアス\n    ctx = message\n    user = message.author\n${branch}\n    await bot.process_commands(message)\n`; // <- process_commandsは必須
         };
 
         Blockly.Python['get_message_content'] = function(block) {
@@ -758,6 +773,17 @@
             // インタラクションコンテキストとして 'interaction' 変数を提供、共通利用のために 'ctx' も定義
             return `@bot.tree.command(name="${commandName}", description="${commandName} command")\nasync def ${commandName}(interaction: discord.Interaction):\n    # コンテキスト変数のエイリアス\n    ctx = interaction\n    user = interaction.user\n${branch}\n`;
         };
+        
+        // プレフィックスコマンド (追加)
+        Blockly.Python['prefix_command'] = function(block) {
+            // !pingの!を取り除くなど、一般的なプレフィックスをコマンド名から除外
+            const commandName = block.getFieldValue('COMMAND_NAME').replace(/^[!~#&?]/, '');
+            const branch = Blockly.Python.statementToCode(block, 'DO') || '    pass';
+            
+            // プレフィックスコマンドではctxはContextオブジェクト
+            return `@bot.command(name='${commandName}')\nasync def ${commandName}_cmd(ctx):\n    user = ctx.author\n${branch}\n`;
+        };
+        // ------------------------------------
 
         Blockly.Python['get_command_arg'] = function(block) {
             const argName = block.getFieldValue('ARG_NAME');
@@ -790,8 +816,7 @@
             const msg = Blockly.Python.valueToCode(block, 'MESSAGE', Blockly.Python.ORDER_NONE) || '""';
             const ephemeral = block.getFieldValue('EPHEMERAL') === 'TRUE' ? 'True' : 'False';
             
-            // Interaction(スラッシュコマンド)とMessage(通常メッセージ)の両方に対応するためのラッパーロジック
-            // Pythonコード側で型判定を行う
+            // Interaction(スラッシュコマンド)とContext(プレフィックスコマンド)とMessage(通常メッセージ)に対応
             let contentCode;
             if (msg.startsWith('discord.Embed')) {
                 contentCode = `embed=${msg}`;
@@ -802,6 +827,8 @@
             return `
 if isinstance(ctx, discord.Interaction):
     await ctx.response.send_message(${contentCode}, ephemeral=${ephemeral})
+elif isinstance(ctx, commands.Context):
+    await ctx.send(${contentCode})
 else:
     # 通常メッセージへの返信ではephemeralは無視されます
     await ctx.reply(${contentCode})
@@ -830,8 +857,10 @@ if isinstance(ctx, discord.Interaction):
             return `
 if 'message' in locals():
     await message.delete()
+elif isinstance(ctx, commands.Context):
+    await ctx.message.delete()
 elif isinstance(ctx, discord.Interaction):
-    # スラッシュコマンドの場合、何も処理しません
+    # スラッシュコマンドの場合、メッセージ削除はコンテキストから直接はできません
     pass
 `;
         };
@@ -839,7 +868,7 @@ elif isinstance(ctx, discord.Interaction):
         Blockly.Python['purge_messages'] = function(block) {
             const limit = Blockly.Python.valueToCode(block, 'LIMIT', Blockly.Python.ORDER_NONE) || '5';
             return `
-if isinstance(ctx, discord.Interaction):
+if isinstance(ctx, discord.Interaction) or isinstance(ctx, commands.Context):
     await ctx.channel.purge(limit=${limit})
 else:
     await ctx.channel.purge(limit=${limit})
@@ -850,17 +879,19 @@ else:
             return `
 if 'message' in locals():
     await message.pin()
+elif isinstance(ctx, commands.Context):
+    await ctx.message.pin()
 `;
         };
         
         Blockly.Python['add_reaction'] = function(block) {
             const emoji = Blockly.Python.valueToCode(block, 'EMOJI', Blockly.Python.ORDER_NONE) || '"👍"';
-            return `try:\n    if 'message' in locals(): await message.add_reaction(${emoji})\nexcept:\n    pass\n`;
+            return `try:\n    if 'message' in locals(): await message.add_reaction(${emoji})\n    elif isinstance(ctx, commands.Context): await ctx.message.add_reaction(${emoji})\nexcept:\n    pass\n`;
         };
         
         Blockly.Python['create_thread'] = function(block) {
             const name = Blockly.Python.valueToCode(block, 'NAME', Blockly.Python.ORDER_NONE) || '"New Thread"';
-            return `try:\n    if 'message' in locals(): await message.create_thread(name=${name})\nexcept:\n    pass\n`;
+            return `try:\n    if 'message' in locals(): await message.create_thread(name=${name})\n    elif isinstance(ctx, commands.Context): await ctx.message.create_thread(name=${name})\nexcept:\n    pass\n`;
         };
 
         // チャンネル操作
@@ -952,6 +983,15 @@ if ch:
             return `member = ctx.guild.get_member(int(${user}))\nif member:\n    await member.edit(nick=${name})\n`;
         };
 
+        Blockly.Blocks['random_integer'] = {
+            init: function() {
+                this.appendValueInput("FROM").setCheck("Number").appendField("🎲 ランダムな数");
+                this.appendValueInput("TO").setCheck("Number").appendField("から");
+                this.setOutput(true, "Number");
+                this.setColour(230);
+            }
+        };
+        
         Blockly.Python['random_integer'] = function(block) {
             const from = Blockly.Python.valueToCode(block, 'FROM', Blockly.Python.ORDER_NONE) || '0';
             const to = Blockly.Python.valueToCode(block, 'TO', Blockly.Python.ORDER_NONE) || '100';
@@ -1004,7 +1044,8 @@ if ch:
                     Blockly.Xml.clearWorkspaceAndLoadFromXml(xml, workspace);
                     saveToLocal(); // Importしたらローカルも更新
                 } catch (err) {
-                    alert('ファイルの読み込みに失敗しました');
+                    // カスタムアラートの代わりにconsole.errorを使用
+                    console.error('ファイルの読み込みに失敗しました', err);
                 }
             };
             reader.readAsText(file);
@@ -1027,6 +1068,10 @@ if ch:
         const generatePythonCode = () => {
             let rawCode = Blockly.Python.workspaceToCode(workspace);
             
+            // コマンドプレフィックスを定義 (デフォルトは'!')
+            // ここを変更すれば、他のプレフィックスにも対応できます
+            const commandPrefix = '!'; 
+
             const boilerplate = `
 import discord
 from discord import app_commands
@@ -1037,11 +1082,11 @@ import datetime
 
 # インテントの設定（Botの権限設定）
 intents = discord.Intents.default()
-intents.message_content = True # メッセージの内容を読み取る権限
+intents.message_content = True # メッセージの内容を読み取る権限 (プレフィックスコマンドに必要)
 intents.members = True # メンバー情報を読み取る権限
 
-# Botの作成
-bot = commands.Bot(command_prefix='!', intents=intents)
+# Botの作成 (ここでプレフィックスを指定)
+bot = commands.Bot(command_prefix='${commandPrefix}', intents=intents)
 
 # --- 作成したブロックのロジック ---
 ${rawCode}
@@ -1090,6 +1135,7 @@ bot.run('YOUR_BOT_TOKEN_HERE')
             });
             
             copyCodeBtn.addEventListener('click', () => {
+                // execCommand('copy')の代わりにnavigator.clipboardを使用
                 navigator.clipboard.writeText(codeOutput.textContent).then(() => {
                     const originalText = copyCodeBtn.innerHTML;
                     copyCodeBtn.innerHTML = '<i data-lucide="check" class="w-3 h-3"></i> コピー完了';
@@ -1098,6 +1144,8 @@ bot.run('YOUR_BOT_TOKEN_HERE')
                         copyCodeBtn.innerHTML = originalText;
                         lucide.createIcons();
                     }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy text: ', err);
                 });
             });
         };

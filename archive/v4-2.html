@@ -142,7 +142,7 @@
             </button>
 
             <!-- 以下の href="" の中身を、あなたのGitHub WikiのURLに書き換えてください -->
-            <a href="https://github.com/あなたのユーザー名/リポジトリ名/wiki" target="_blank" rel="noopener noreferrer" class="p-2 text-gray-600 transition-colors rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 flex items-center justify-center" title="ヘルプ / ドキュメント">
+            <a href="https://github.com/himais0giiiin/easy-bdc/wiki/Docs" target="_blank" rel="noopener noreferrer" class="p-2 text-gray-600 transition-colors rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 flex items-center justify-center" title="ヘルプ / ドキュメント">
                 <i data-lucide="circle-help" class="w-5 h-5"></i>
             </a>
 
@@ -208,11 +208,6 @@
             <category name="Bot設定" colour="#9b59b6">
                 <block type="set_bot_status"></block>
                 <block type="wait_seconds"></block>
-            </category>
-
-            <category name="データ保存" colour="#e67e22">
-                <block type="save_to_json"></block>
-                <block type="load_from_json"></block>
             </category>
 
             <category name="管理機能" colour="#e74c3c">
@@ -691,29 +686,6 @@
                 }
             };
 
-            // --- JSON Data Blocks ---
-            Blockly.Blocks['save_to_json'] = {
-                init: function() {
-                    this.appendValueInput("KEY").setCheck("String").appendField("💾 データを保存 キー:");
-                    this.appendValueInput("VALUE").setCheck(null).appendField("値:");
-                    this.setInputsInline(true);
-                    this.setPreviousStatement(true, null);
-                    this.setNextStatement(true, null);
-                    this.setColour(30);
-                    this.setTooltip("指定したキーと値をJSONファイルに保存します。");
-                }
-            };
-
-            Blockly.Blocks['load_from_json'] = {
-                init: function() {
-                    this.appendValueInput("KEY").setCheck("String").appendField("📂 データを読み込み キー:");
-                    this.setInputsInline(true);
-                    this.setOutput(true, null);
-                    this.setColour(30);
-                    this.setTooltip("保存されたJSONファイルから指定したキーの値を取得します。");
-                }
-            };
-
             Blockly.Blocks['create_embed'] = {
                 init: function() {
                     this.appendDummyInput().appendField("✨ 新しい埋め込み(Embed)作成");
@@ -1164,18 +1136,6 @@ if _ch:
                 return `await asyncio.sleep(${sec})\n`;
             };
 
-            // --- JSON Data Generators ---
-            Blockly.Python['save_to_json'] = function(block) {
-                const key = Blockly.Python.valueToCode(block, 'KEY', Blockly.Python.ORDER_NONE) || '"key"';
-                const value = Blockly.Python.valueToCode(block, 'VALUE', Blockly.Python.ORDER_NONE) || 'None';
-                return `_save_data(${key}, ${value})\n`;
-            };
-
-            Blockly.Python['load_from_json'] = function(block) {
-                const key = Blockly.Python.valueToCode(block, 'KEY', Blockly.Python.ORDER_NONE) || '"key"';
-                return [`_get_data(${key})`, Blockly.Python.ORDER_ATOMIC];
-            };
-
             Blockly.Python['create_embed'] = function(block) {
                 const embedVarName = Blockly.Python.variableDB_.getDistinctName('embed', Blockly.Names.VARIABLE_NAME);
                 let code = `
@@ -1504,8 +1464,6 @@ import random
 import asyncio
 import datetime
 import math
-import json
-import os
 
 intents = discord.Intents.default()
 intents.message_content = True 
@@ -1513,29 +1471,6 @@ intents.members = True
 
 # Botの作成
 bot = commands.Bot(command_prefix='!', intents=intents)
-
-# --- データ保存用ヘルパー関数 ---
-DATA_FILE = "bot_data.json"
-
-def _load_all_data():
-    if not os.path.exists(DATA_FILE):
-        return {}
-    try:
-        with open(DATA_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except:
-        return {}
-
-def _save_data(key, value):
-    data = _load_all_data()
-    data[str(key)] = value
-    with open(DATA_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
-
-def _get_data(key):
-    data = _load_all_data()
-    return data.get(str(key))
-# ------------------------------
 
 # --- ユーザー作成ロジック ---
 ${cleanedCode}

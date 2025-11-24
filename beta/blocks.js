@@ -18,6 +18,25 @@ Blockly.Blocks['on_message_create'] = {
     this.setTooltip('誰かがメッセージを送信した時に実行されます。');
   },
 };
+// --- NEW EVENTS ---
+Blockly.Blocks['on_member_join'] = {
+  init: function () {
+    this.appendDummyInput().appendField('👤 メンバーが参加したとき');
+    this.appendStatementInput('DO').setCheck(null).appendField('実行する処理');
+    this.setColour(30);
+    this.setTooltip('新しいメンバーがサーバーに参加した時に実行されます。');
+  },
+};
+Blockly.Blocks['on_member_remove'] = {
+  init: function () {
+    this.appendDummyInput().appendField('👋 メンバーが退出したとき');
+    this.appendStatementInput('DO').setCheck(null).appendField('実行する処理');
+    this.setColour(30);
+    this.setTooltip('メンバーがサーバーから退出（またはKick/Ban）された時に実行されます。');
+  },
+};
+// ------------------
+
 Blockly.Blocks['get_message_content'] = {
   init: function () {
     this.appendDummyInput().appendField('受信したメッセージの内容');
@@ -58,7 +77,7 @@ Blockly.Blocks['get_command_arg'] = {
 Blockly.Blocks['get_user_info'] = {
   init: function () {
     this.appendDummyInput()
-      .appendField('👤 実行者の')
+      .appendField('👤 実行者(対象)の')
       .appendField(
         new Blockly.FieldDropdown([
           ['ユーザーID', 'id'],
@@ -75,7 +94,7 @@ Blockly.Blocks['get_user_info'] = {
 Blockly.Blocks['get_member_detail'] = {
   init: function () {
     this.appendDummyInput()
-      .appendField('👤 実行者の詳細:')
+      .appendField('👤 実行者(対象)の詳細:')
       .appendField(
         new Blockly.FieldDropdown([
           ['アバターURL', 'avatar.url'],
@@ -148,6 +167,17 @@ Blockly.Blocks['reply_message'] = {
     this.setColour(160);
   },
 };
+// --- NEW DM BLOCK ---
+Blockly.Blocks['send_dm'] = {
+  init: function () {
+    this.appendValueInput('USER_ID').setCheck('String').appendField('📩 DMを送信 (ユーザーID');
+    this.appendValueInput('MESSAGE').setCheck(['String', 'Embed']).appendField(') 内容');
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(160);
+  },
+};
+// --------------------
 Blockly.Blocks['defer_reply'] = {
   init: function () {
     this.appendDummyInput()
@@ -297,6 +327,18 @@ Blockly.Blocks['join_voice_channel'] = {
     this.setColour(340);
   },
 };
+// --- NEW AUDIO PLAY BLOCK ---
+Blockly.Blocks['play_audio_file'] = {
+  init: function () {
+    this.appendValueInput('FILEPATH').setCheck('String').appendField('🔊 音楽ファイルを再生');
+    this.appendDummyInput().appendField('(パス)');
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setColour(340);
+    this.setTooltip('VC内で音楽を再生します。FFmpegが必要です。');
+  },
+};
+// ----------------------------
 Blockly.Blocks['leave_voice_channel'] = {
   init: function () {
     this.appendDummyInput().appendField('🔇 ボイスチャンネルから切断');
@@ -597,6 +639,18 @@ Blockly.Python['on_message_create'] = function (block) {
   const branch = getBranchCode(block, 'DO');
   return `\n@bot.event\nasync def on_message(message):\n    if message.author == bot.user:\n        return\n    ctx = message\n    user = message.author\n${branch.trimEnd()}\n    await bot.process_commands(message)\n`;
 };
+
+// --- Generators for New Events ---
+Blockly.Python['on_member_join'] = function (block) {
+  const branch = getBranchCode(block, 'DO');
+  return `\n@bot.event\nasync def on_member_join(member):\n    user = member\n    ctx = member\n${branch.trimEnd()}\n`;
+};
+Blockly.Python['on_member_remove'] = function (block) {
+  const branch = getBranchCode(block, 'DO');
+  return `\n@bot.event\nasync def on_member_remove(member):\n    user = member\n    ctx = member\n${branch.trimEnd()}\n`;
+};
+// ---------------------------------
+
 Blockly.Python['get_message_content'] = function (block) {
   return [
     '(ctx.content if "ctx" in locals() and hasattr(ctx, "content") else "")',
@@ -637,6 +691,7 @@ Blockly.Python['get_member_detail'] = function (block) {
 Blockly.Python['get_channel_info'] = function (block) {
   const type = block.getFieldValue('TYPE');
   let code = `ctx.channel.${type}`;
+  // For member events (ctx=member), use member.guild.system_channel or similar if needed, but usually channel info is for messages
   return [
     `(${code} if "ctx" in locals() and hasattr(ctx, "channel") else "Unknown")`,
     Blockly.Python.ORDER_ATOMIC,
@@ -646,7 +701,7 @@ Blockly.Python['get_server_info'] = function (block) {
   const type = block.getFieldValue('TYPE');
   let code = `ctx.guild.${type}`;
   return [
-    `(${code} if "ctx" in locals() and ctx.guild else "Unknown")`,
+    `(${code} if "ctx" in locals() and hasattr(ctx, "guild") and ctx.guild else "Unknown")`,
     Blockly.Python.ORDER_ATOMIC,
   ];
 };
@@ -665,6 +720,15 @@ Blockly.Python['reply_message'] = function (block) {
   let contentCode = msg.startsWith('discord.Embed') ? `embed=${msg}` : `content=${msg}`;
   return `\nif 'ctx' in locals():\n    if isinstance(ctx, discord.Interaction):\n        if ctx.response.is_done():\n            await ctx.followup.send(${contentCode}, ephemeral=${ephemeral})\n        else:\n            await ctx.response.send_message(${contentCode}, ephemeral=${ephemeral})\n    elif isinstance(ctx, commands.Context):\n        await ctx.send(${contentCode})\n    elif isinstance(ctx, discord.Message):\n        await ctx.reply(${contentCode})\n`;
 };
+// --- NEW DM GENERATOR ---
+Blockly.Python['send_dm'] = function (block) {
+  const userId = Blockly.Python.valueToCode(block, 'USER_ID', Blockly.Python.ORDER_NONE) || '0';
+  const msg = Blockly.Python.valueToCode(block, 'MESSAGE', Blockly.Python.ORDER_NONE) || '""';
+  const contentCode = msg.startsWith('discord.Embed') ? `embed=${msg}` : `content=${msg}`;
+  return `\n_u_dm = bot.get_user(int(${userId})) or await bot.fetch_user(int(${userId}))\nif _u_dm:\n    await _u_dm.send(${contentCode})\n`;
+};
+// ------------------------
+
 Blockly.Python['defer_reply'] = function (block) {
   const ephemeral = block.getFieldValue('EPHEMERAL') === 'TRUE' ? 'True' : 'False';
   return `\nif 'ctx' in locals():\n    if isinstance(ctx, discord.Interaction):\n        await ctx.response.defer(ephemeral=${ephemeral})\n    elif isinstance(ctx, commands.Context):\n        async with ctx.typing(): pass\n`;
@@ -721,6 +785,12 @@ Blockly.Python['print_to_console'] = function (block) {
 Blockly.Python['join_voice_channel'] = function (block) {
   return `\nif 'user' in locals() and user.voice:\n    await user.voice.channel.connect()\n`;
 };
+// --- NEW AUDIO PLAY GENERATOR ---
+Blockly.Python['play_audio_file'] = function (block) {
+  const path = Blockly.Python.valueToCode(block, 'FILEPATH', Blockly.Python.ORDER_NONE) || '""';
+  return `\nif 'ctx' in locals() and ctx.guild.voice_client:\n    if not ctx.guild.voice_client.is_playing():\n        ctx.guild.voice_client.play(discord.FFmpegPCMAudio(${path}))\n`;
+};
+// --------------------------------
 Blockly.Python['leave_voice_channel'] = function (block) {
   return `\nif 'ctx' in locals() and ctx.guild.voice_client:\n    await ctx.guild.voice_client.disconnect()\n`;
 };

@@ -94,11 +94,12 @@ const generatePythonCode = () => {
     let line = lines[i];
     if (line.includes('# BUTTON_EVENT:')) {
       currentEventName = line.split(':')[1].trim();
-      componentEvents += `        if interaction.data.get('custom_id') == '${currentEventName}':\n            await on_button_${currentEventName}(interaction)\n`;
+      componentEvents +=
+        componentEvents += `            if interaction.data.get('custom_id') == '${currentEventName}':\n                await on_button_${currentEventName}(interaction)\n`;
       filteredLines.push(line); // Keep definition
     } else if (line.includes('# MODAL_EVENT:')) {
       currentEventName = line.split(':')[1].trim();
-      modalEvents += `        if interaction.data.get('custom_id') == '${currentEventName}':\n            await on_modal_${currentEventName}(interaction)\n`;
+      modalEvents += `            if interaction.data.get('custom_id') == '${currentEventName}':\n                await on_modal_${currentEventName}(interaction)\n`;
       filteredLines.push(line);
     } else {
       filteredLines.push(line);
@@ -106,6 +107,9 @@ const generatePythonCode = () => {
   }
 
   rawCode = filteredLines.join('\n');
+  if (!componentEvents.trim()) componentEvents = '            pass';
+
+  if (!modalEvents.trim()) modalEvents = '            pass';
 
   // --- Optimized Boilerplate ---
   const boilerplate = `
@@ -172,9 +176,9 @@ class EasyModal(discord.ui.Modal):
 async def on_interaction(interaction):
     try:
         if interaction.type == discord.InteractionType.component:
-${componentEvents || '            pass'}
+${componentEvents}
         elif interaction.type == discord.InteractionType.modal_submit:
-${modalEvents || '            pass'}
+${modalEvents}
     except Exception as e:
         print(f"Interaction Error: {e}")
 

@@ -100,7 +100,14 @@ async def on_interaction(interaction):
         ${componentEvents}
     elif interaction.type == discord.InteractionType.modal_submit:
         ${modalEvents}
-
+@bot.event
+async def on_ready():
+    print(f'Logged in as {bot.user}')
+    try:
+        synced = await bot.tree.sync()
+        print(f\"Synced {len(synced)} command(s)\")
+    except Exception as e:
+        print(e)
 ${rawCode}
 # ユーザー操作
 if __name__ == "__main__":

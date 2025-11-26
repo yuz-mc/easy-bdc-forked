@@ -375,14 +375,6 @@ const initializeApp = (Blocks) => {
     a.click();
     URL.revokeObjectURL(url);
   });
-
-};
-
-window.onload = async () => {
-  await Promise.all([loadBlockTemplates(), loadCodeTemplates()]);
-  const Blocks = generateBlocks();
-  initializeApp(Blocks);
-};
   
   // --- EDBP Plugin Loader Modal Logic ---
   const edbpBtn = document.getElementById('edbpBtn');
@@ -407,4 +399,8 @@ window.onload = async () => {
   });
 };
 
-window.onload = initializeApp;
+window.onload = async () => {
+  await Promise.all([loadBlockTemplates(), loadCodeTemplates()]);
+  const Blocks = generateBlocks();
+  initializeApp(Blocks);
+};

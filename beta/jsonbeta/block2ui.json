@@ -562,11 +562,15 @@
     },
 
   "timeout_user": {
+    "version":2,
     "title": "🔇 タイムアウト",
     "type": "statement",
-    "inputs": [
-      { "name": "USER_ID", "check": "String" },
-      { "name": "MINUTES", "check": "Number" }
+    "fields" : [
+      {"kind" : "label", "text":"(ID"},
+      {"kind" : "value","name":"USER_ID", "check":"String"},
+      {"kind" : "label", "text":"、分"},
+      {"kind" : "value","name":"MINUTES", "check":"Number"},
+      {"kind" : "label", "text":")"}
     ],
     "previous": true,
     "next": true,

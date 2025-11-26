@@ -32,37 +32,40 @@ export function generateBlocks() {
 
         (schema.fields || []).forEach((f, idx) => {
           if (isV2) {
-            if (!this._dummyLine) this._dummyLine = this.appendDummyInput();
-            const line = this._dummyLine;
-
             const kind = f.kind || "input";
 
-            if (kind === "label") {
-              line.appendField(f.text || "");
+            if (kind === "label" || kind === "input") {
+              if (!this._dummyLine) this._dummyLine = this.appendDummyInput();
+              const line = this._dummyLine;
+
+              if (kind === "label") {
+                line.appendField(f.text || "");
+              } else {
+                const type = f.inputType || "text";
+                if (type === "dropdown") {
+                  line.appendField(new Blockly.FieldDropdown(f.options || []), f.name);
+                } else if (type === "checkbox") {
+                  line.appendField(f.label || "");
+                  line.appendField(
+                    new Blockly.FieldCheckbox(f.default === "TRUE" ? "TRUE" : "FALSE"),
+                    f.name
+                  );
+                } else if (type === "multiline_text") {
+                  line.appendField(new Blockly.FieldMultilineInput(f.default || ""), f.name);
+                } else {
+                  line.appendField(new Blockly.FieldTextInput(f.default || ""), f.name);
+                }
+              }
             } else if (kind === "value") {
-              // keep in sequence: add a value input, then continue on the same line
               const val = this.appendValueInput(f.name).setCheck(f.check || null);
               if (f.label) val.appendField(f.label);
               if (f.align) val.setAlign(f.align);
-            } else {
-              const type = f.inputType || "text";
-              if (type === "dropdown") {
-                line.appendField(new Blockly.FieldDropdown(f.options || []), f.name);
-              } else if (type === "checkbox") {
-                line.appendField(f.label || "");
-                line.appendField(
-                  new Blockly.FieldCheckbox(f.default === "TRUE" ? "TRUE" : "FALSE"),
-                  f.name
-                );
-              } else if (type === "multiline_text") {
-                line.appendField(new Blockly.FieldMultilineInput(f.default || ""), f.name);
-              } else {
-                line.appendField(new Blockly.FieldTextInput(f.default || ""), f.name);
-              }
+              // value inputs occupy their own position; force next items to start a new dummy line
+              this._dummyLine = null;
             }
 
             if (f.newline) {
-              this._dummyLine = this.appendDummyInput();
+              this._dummyLine = null;
             }
           } else {
             const input = this.appendDummyInput();

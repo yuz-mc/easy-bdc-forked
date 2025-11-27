@@ -1,10 +1,8 @@
-import Blocks from '../blocks';
-lucide.createIcons();
+import Blocks from './blocks.js';
 
 let workspace;
 const STORAGE_KEY = 'discord_bot_builder_workspace_v5';
 
-// --- Custom Block Definition (Pythonコード直接記述) ---
 Blockly.Blocks['custom_python_code'] = {
   init: function () {
     this.appendDummyInput().appendField('🐍 Pythonコード実行');
@@ -135,6 +133,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 intents = discord.Intents.default()
 intents.message_content = True 
 intents.members = True 
+intents.voice_states = True
 
 # Botの作成
 bot = commands.Bot(command_prefix='!', intents=intents)
@@ -215,6 +214,7 @@ const toggleTheme = (modernLightTheme, modernDarkTheme) => {
 };
 
 const initializeApp = () => {
+  lucide.createIcons();
   const { modernLightTheme, modernDarkTheme } = setupBlocklyEnvironment();
 
   const blocklyDiv = document.getElementById('blocklyDiv');
